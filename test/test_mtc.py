@@ -7,15 +7,15 @@ from pathlib import Path
 
 import pandas as pd
 import pandas.testing as pdt
-import pkg_resources
 
 from activitysim.core import testing, workflow
 
 
 def run_test_mtc(multiprocess=False, chunkless=False, recode=False, sharrow=False):
     def example_path(dirname):
-        resource = os.path.join("examples", "prototype_mtc", dirname)
-        return pkg_resources.resource_filename("activitysim", resource)
+        return os.path.normpath(
+            os.path.join(os.path.dirname(__file__), "..", dirname)
+        )
 
     def test_path(dirname):
         return os.path.join(os.path.dirname(__file__), dirname)
@@ -165,6 +165,7 @@ def test_mtc_progressive():
     import activitysim.abm  # register components
 
     whale = workflow.create_example("prototype_mtc", temp=True)
+    whale.filesystem.persist_sharrow_cache()
 
     assert whale.settings.models == EXPECTED_MODELS
     assert whale.settings.chunk_size == 0
