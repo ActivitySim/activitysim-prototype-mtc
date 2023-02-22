@@ -81,6 +81,8 @@ def run_test_mtc(multiprocess=False, chunkless=False, recode=False, sharrow=Fals
             "-o",
             test_path("output"),
         ]
+        if os.environ.get("GITHUB_ACTIONS") != "true":
+            run_args.append("--persist-sharrow-cache")
     else:
         run_args = [
             "-c",
