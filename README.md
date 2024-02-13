@@ -14,4 +14,9 @@ and policies. The model is implemented in a micro-simulation framework. Microsim
 methods capture aggregate outcomes through the representation of the behavior of
 individual decision-makers.
 
+There are two model structures in the `prototype_mtc` example: a simpler model that is
+relatively close to the TM1 model, and a more complex model that is incorporates
+new model components that have been added by the ActivitySim consortium over the
+past few years.
+
 See https://activitysim.github.io for more information.
