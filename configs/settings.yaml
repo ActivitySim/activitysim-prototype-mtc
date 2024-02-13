@@ -88,6 +88,8 @@ input_table_list:
       - TOPOLOGY
       - TERMINAL
 
+recode_pipeline_columns: True
+
 # convert input CSVs to HDF5 format and save to outputs directory
 # create_input_store: True
 
