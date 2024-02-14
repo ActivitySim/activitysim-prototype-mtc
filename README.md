@@ -20,3 +20,27 @@ new model components that have been added by the ActivitySim consortium over the
 past few years.
 
 See https://activitysim.github.io for more information.
+
+# Installation
+
+The following short Python script will download and prepare the example data 
+for the `prototype_mtc_extended` example model.
+
+```python
+from pathlib import Path
+from activitysim.examples.external import registered_external_example
+
+example_dir = registered_external_example(
+    name="prototype_mtc_extended", 
+    working_dir=Path.cwd()
+)
+```
+
+# Benchmarking
+
+The `prototype_mtc` example model is run using the `activitysim` command line tool.
+A quick and easy way to run the model for benchmarking is to use the following command:
+
+```shell
+activitysim workflow performance-benchmarking
+```
