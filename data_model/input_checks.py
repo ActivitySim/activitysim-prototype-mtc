@@ -225,11 +225,11 @@ class Landuse(pa.DataFrameModel):
     def check_pop_per_zone(cls, land_use: pd.DataFrame):
         persons = TABLE_STORE["persons"]
         households = TABLE_STORE["households"]
-        pop = persons.groupby(
-            persons.household_id.map(
-                lambda hhid: households.set_index("household_id").home_zone_id[hhid]
-            )
-        ).person_id.nunique()
+        persons_per_household = persons.groupby("household_id").size()
+        hh = households[["household_id", "home_zone_id"]].merge(persons_per_household.rename("persons_per_household"), on="household_id")
+        pop = (
+            hh.groupby(households.home_zone_id)["persons_per_household"].sum()
+        )
         return (pop == land_use.set_index("zone_id").TOTPOP).reindex(land_use.index)
 
 
