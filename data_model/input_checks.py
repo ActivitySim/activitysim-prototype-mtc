@@ -230,7 +230,8 @@ class Landuse(pa.DataFrameModel):
         pop = (
             hh.groupby(households.home_zone_id)["persons_per_household"].sum()
         )
-        return (pop == land_use.set_index("zone_id").TOTPOP).reindex(land_use.index)
+        lu = land_use.set_index("zone_id")
+        return (pop.reindex(lu.index) == lu.TOTPOP)
 
 
 class NetworkLinks(pa.DataFrameModel):
