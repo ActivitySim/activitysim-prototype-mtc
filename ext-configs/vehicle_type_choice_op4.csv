@@ -1,10 +1,10 @@
 ﻿Label,Description,Expression,Coefficient
-util_ln_nmods,number of models available,"@np.log(1 + df.NumModels)",coef_ln_nmods
-util_ln_nmakes,number of makes available,"@np.log(1 + df.NumMakes)",coef_ln_nmakes
-util_mpg,miles per gallon (or equivalent),"@df.MPG",coef_mpg
-util_crange,Range for BEV (mi),"@df.Range",coef_crange
-util_crangeltwk,range less than average round trip distance to work,"@np.where((df.Range < df.avg_hh_dist_to_work * 2) * (df.fuel_type_num_coded==1), 1, 0)",coef_crangeltwk
-util_ln_chpc_ev,ln(1+number of chargers per capita in MSA/state),"@np.log(1+CHARGERS_PER_CAP) * ((df.fuel_type_num_coded==5) | (df.fuel_type_num_coded==1))",coef_ln_chpc_ev
+util_ln_nmods,number of models available,"logged_models",coef_ln_nmods
+util_ln_nmakes,number of makes available,"logged_makes",coef_ln_nmakes
+util_mpg,miles per gallon (or equivalent),"MPG",coef_mpg
+util_crange,Range for BEV (mi),"Range",coef_crange
+util_crangeltwk,range less than average round trip distance to work,"(Range < (avg_hh_dist_to_work * 2)) & (fuel_type_num_coded==1)",coef_crangeltwk
+util_ln_chpc_ev,ln(1+number of chargers per capita in MSA/state),"logged_chargers_per_capita * ((fuel_type_num_coded==5) | (fuel_type_num_coded==1))",coef_ln_chpc_ev
 #,income related variables,,
 util_cprice0,New Purchase Price (2017$) Segmented by Income,"((income < 25000) & (income > -1)) * NewPrice",coef_cprice0
 util_cprice25,New Purchase Price (2017$) Segmented by Income,"((income < 50000) & (income >= 25000)) * NewPrice",coef_cprice25
@@ -18,92 +18,92 @@ util_i100_age,Vehicle Age Segmented by Income,"((income < 150000) & (income >= 1
 util_i150p_age,Vehicle Age Segmented by Income,"((income < 150000) & (income >= 100000)) * age",coef_i150p_age
 util_imiss_age,Vehicle Age Missing Income,"((income < 0) | income.isna()) * age",coef_imiss_age
 #,household density variables,,
-util_den3_van,500-999 HH / sq mi Van,"@np.where((df.hh_per_mi < 1000) & (df.hh_per_mi >= 500), (df.body_type_num_coded==5),0)",coef_den3_van
-util_den4_van,1000-1999 HH / sq mi Van,"@np.where((df.hh_per_mi < 2000) & (df.hh_per_mi >= 1000), (df.body_type_num_coded==5),0)",coef_den4_van
-util_den5_van,2000-3999 HH / sq mi Van,"@np.where((df.hh_per_mi < 4000) & (df.hh_per_mi >= 2000), ((df.body_type_num_coded==5)),0)",coef_den5_van
-util_den6_van,4000-9999 HH / sq mi Van,"@np.where((df.hh_per_mi < 10000) & (df.hh_per_mi >= 4000),((df.body_type_num_coded==5)),0)",coef_den6_van
-util_den7_van,10000-24999 HH / sq mi Van,"@np.where((df.hh_per_mi < 25000) & (df.hh_per_mi >= 10000),((df.body_type_num_coded==5)),0)",coef_den7_van
-util_den8_van,25000+ HH / sq mi Van,"@np.where(df.hh_per_mi >= 25000,(df.body_type_num_coded==5),0)",coef_den8_van
-util_den3_suv,500-999 HH / sq mi SUV,"@np.where((df.hh_per_mi < 1000) & (df.hh_per_mi >= 500),((df.body_type_num_coded==4)),0)",coef_den3_suv
-util_den4_suv,1000-1999 HH / sq mi SUV,"@np.where((df.hh_per_mi < 2000) & (df.hh_per_mi >= 1000),((df.body_type_num_coded==4)),0)",coef_den4_suv
-util_den5_suv,2000-3999 HH / sq mi SUV,"@np.where((df.hh_per_mi < 4000) & (df.hh_per_mi >= 2000),((df.body_type_num_coded==4)),0)",coef_den5_suv
-util_den6_suv,4000-9999 HH / sq mi SUV,"@np.where((df.hh_per_mi < 10000) & (df.hh_per_mi >= 4000),((df.body_type_num_coded==4)),0)",coef_den6_suv
-util_den7_suv,10000-24999 HH / sq mi SUV,"@np.where((df.hh_per_mi < 25000) & (df.hh_per_mi >= 10000),((df.body_type_num_coded==4)),0)",coef_den7_suv
-util_den8_suv,25000+ HH / sq mi SUV,"@np.where(df.hh_per_mi >= 25000,(df.body_type_num_coded==4),0)",coef_den8_suv
-util_den3_pu,500-999 HH / sq mi Pickup,"@np.where((df.hh_per_mi < 1000) & (df.hh_per_mi >= 500),((df.body_type_num_coded==3)),0)",coef_den3_pu
-util_den4_pu,1000-1999 HH / sq mi Pickup,"@np.where((df.hh_per_mi < 2000) & (df.hh_per_mi >= 1000),((df.body_type_num_coded==3)),0)",coef_den4_pu
-util_den5_pu,2000-3999 HH / sq mi Pickup,"@np.where((df.hh_per_mi < 4000) & (df.hh_per_mi >= 2000),((df.body_type_num_coded==3)),0)",coef_den5_pu
-util_den6_pu,4000-9999 HH / sq mi Pickup,"@np.where((df.hh_per_mi < 10000) & (df.hh_per_mi >= 4000),((df.body_type_num_coded==3)),0)",coef_den6_pu
-util_den7_pu,10000-24999 HH / sq mi Pickup,"@np.where((df.hh_per_mi < 25000) & (df.hh_per_mi >= 10000),((df.body_type_num_coded==3)),0)",coef_den7_pu
-util_den8_mc,25000+ HH / sq mi Pickup,"@np.where((df.hh_per_mi >= 25000),((df.body_type_num_coded==3)),0)",coef_den8_pu
-util_den3_mc,500-999 HH / sq mi Motorcycle,"@np.where((df.hh_per_mi < 1000) & (df.hh_per_mi >= 500),((df.body_type_num_coded==2)),0)",coef_den3_mc
-util_den4_mc,1000-1999 HH / sq mi Motorcycle,"@np.where((df.hh_per_mi < 2000) & (df.hh_per_mi >= 1000),((df.body_type_num_coded==2)),0)",coef_den4_mc
-util_den5_mc,2000-3999 HH / sq mi Motorcycle,"@np.where((df.hh_per_mi < 4000) & (df.hh_per_mi >= 2000),((df.body_type_num_coded==2)),0)",coef_den5_mc
-util_den6_mc,4000-9999 HH / sq mi Motorcycle,"@np.where((df.hh_per_mi < 10000) & (df.hh_per_mi >= 4000),((df.body_type_num_coded==2)),0)",coef_den6_mc
-util_den7_mc,10000-24999 HH / sq mi Motorcycle,"@np.where((df.hh_per_mi < 25000) & (df.hh_per_mi >= 10000),((df.body_type_num_coded==2)),0)",coef_den7_mc
-util_den8_mc,25000+ HH / sq mi Motorcycle,"@np.where((df.hh_per_mi >= 25000),((df.body_type_num_coded==2)),0)",coef_den8_mc
-util_den3_hyb,500-999 HH / sq mi Hybrid,"@np.where((df.hh_per_mi < 1000) & (df.hh_per_mi >= 500),((df.fuel_type_num_coded==4)),0)",coef_den3_hyb
-util_den4_hyb,1000-1999 HH / sq mi Hybrid,"@np.where((df.hh_per_mi < 2000) & (df.hh_per_mi >= 1000),((df.fuel_type_num_coded==4)),0)",coef_den4_hyb
-util_den5_hyb,2000-3999 HH / sq mi Hybrid,"@np.where((df.hh_per_mi < 4000) & (df.hh_per_mi >= 2000),((df.fuel_type_num_coded==4)),0)",coef_den5_hyb
-util_den6_hyb,4000-9999 HH / sq mi Hybrid,"@np.where((df.hh_per_mi < 10000) & (df.hh_per_mi >= 4000),((df.fuel_type_num_coded==4)),0)",coef_den6_hyb
-util_den7_hyb,10000-24999 HH / sq mi Hybrid,"@np.where((df.hh_per_mi < 25000) & (df.hh_per_mi >= 10000),((df.fuel_type_num_coded==4)),0)",coef_den7_hyb
-util_den8_hyb,25000+ HH / sq mi Hybrid,"@np.where(df.hh_per_mi >= 25000,(df.fuel_type_num_coded==4),0)",coef_den8_hyb
-util_den34_ev,500-1999 HH / sq mi Electric,"@((df.hh_per_mi < 2000) & (df.hh_per_mi >= 500)) * ((df.fuel_type_num_coded==5) | (df.fuel_type_num_coded==1))",coef_den34_ev
-util_den5_ev,2000-3999 HH / sq mi Electric,"@((df.hh_per_mi < 4000) & (df.hh_per_mi >= 2000)) * ((df.fuel_type_num_coded==5) | (df.fuel_type_num_coded==1))",coef_den5_ev
-util_den6_ev,4000-9999 HH / sq mi Electric,"@((df.hh_per_mi < 10000) & (df.hh_per_mi >= 4000)) * ((df.fuel_type_num_coded==5) | (df.fuel_type_num_coded==1))",coef_den6_ev
-util_den78_ev,10000+ HH / sq mi Electric,"@(df.hh_per_mi >= 10000) * ((df.fuel_type_num_coded==5) | (df.fuel_type_num_coded==1))",coef_den78_ev
+util_den3_van,500-999 HH / sq mi Van,"(hh_per_mi < 1000) & (hh_per_mi >= 500) & (body_type_num_coded==5)",coef_den3_van
+util_den4_van,1000-1999 HH / sq mi Van,"(hh_per_mi < 2000) & (hh_per_mi >= 1000) & (body_type_num_coded==5)",coef_den4_van
+util_den5_van,2000-3999 HH / sq mi Van,"(hh_per_mi < 4000) & (hh_per_mi >= 2000) & (body_type_num_coded==5)",coef_den5_van
+util_den6_van,4000-9999 HH / sq mi Van,"(hh_per_mi < 10000) & (hh_per_mi >= 4000) & (body_type_num_coded==5)",coef_den6_van
+util_den7_van,10000-24999 HH / sq mi Van,"(hh_per_mi < 25000) & (hh_per_mi >= 10000) & (body_type_num_coded==5)",coef_den7_van
+util_den8_van,25000+ HH / sq mi Van,"(hh_per_mi >= 25000) & (body_type_num_coded==5)",coef_den8_van
+util_den3_suv,500-999 HH / sq mi SUV,"(hh_per_mi < 1000) & (hh_per_mi >= 500) & (body_type_num_coded==4)",coef_den3_suv
+util_den4_suv,1000-1999 HH / sq mi SUV,"(hh_per_mi < 2000) & (hh_per_mi >= 1000) & (body_type_num_coded==4)",coef_den4_suv
+util_den5_suv,2000-3999 HH / sq mi SUV,"(hh_per_mi < 4000) & (hh_per_mi >= 2000) & (body_type_num_coded==4)",coef_den5_suv
+util_den6_suv,4000-9999 HH / sq mi SUV,"(hh_per_mi < 10000) & (hh_per_mi >= 4000) & (body_type_num_coded==4)",coef_den6_suv
+util_den7_suv,10000-24999 HH / sq mi SUV,"(hh_per_mi < 25000) & (hh_per_mi >= 10000) & (body_type_num_coded==4)",coef_den7_suv
+util_den8_suv,25000+ HH / sq mi SUV,"(hh_per_mi >= 25000) & (body_type_num_coded==4)",coef_den8_suv
+util_den3_pu,500-999 HH / sq mi Pickup,"(hh_per_mi < 1000) & (hh_per_mi >= 500) & (body_type_num_coded==3)",coef_den3_pu
+util_den4_pu,1000-1999 HH / sq mi Pickup,"(hh_per_mi < 2000) & (hh_per_mi >= 1000) & (body_type_num_coded==3)",coef_den4_pu
+util_den5_pu,2000-3999 HH / sq mi Pickup,"(hh_per_mi < 4000) & (hh_per_mi >= 2000) & (body_type_num_coded==3)",coef_den5_pu
+util_den6_pu,4000-9999 HH / sq mi Pickup,"(hh_per_mi < 10000) & (hh_per_mi >= 4000) & (body_type_num_coded==3)",coef_den6_pu
+util_den7_pu,10000-24999 HH / sq mi Pickup,"(hh_per_mi < 25000) & (hh_per_mi >= 10000) & (body_type_num_coded==3)",coef_den7_pu
+util_den8_mc,25000+ HH / sq mi Pickup,"(hh_per_mi >= 25000) & (body_type_num_coded==3)",coef_den8_pu
+util_den3_mc,500-999 HH / sq mi Motorcycle,"(hh_per_mi < 1000) & (hh_per_mi >= 500) & (body_type_num_coded==2)",coef_den3_mc
+util_den4_mc,1000-1999 HH / sq mi Motorcycle,"(hh_per_mi < 2000) & (hh_per_mi >= 1000) & (body_type_num_coded==2)",coef_den4_mc
+util_den5_mc,2000-3999 HH / sq mi Motorcycle,"(hh_per_mi < 4000) & (hh_per_mi >= 2000) & (body_type_num_coded==2)",coef_den5_mc
+util_den6_mc,4000-9999 HH / sq mi Motorcycle,"(hh_per_mi < 10000) & (hh_per_mi >= 4000) & (body_type_num_coded==2)",coef_den6_mc
+util_den7_mc,10000-24999 HH / sq mi Motorcycle,"(hh_per_mi < 25000) & (hh_per_mi >= 10000) & (body_type_num_coded==2)",coef_den7_mc
+util_den8_mc,25000+ HH / sq mi Motorcycle,"(hh_per_mi >= 25000) & (body_type_num_coded==2)",coef_den8_mc
+util_den3_hyb,500-999 HH / sq mi Hybrid,"(hh_per_mi < 1000) & (hh_per_mi >= 500) & (fuel_type_num_coded==4)",coef_den3_hyb
+util_den4_hyb,1000-1999 HH / sq mi Hybrid,"(hh_per_mi < 2000) & (hh_per_mi >= 1000) & (fuel_type_num_coded==4)",coef_den4_hyb
+util_den5_hyb,2000-3999 HH / sq mi Hybrid,"(hh_per_mi < 4000) & (hh_per_mi >= 2000) & (fuel_type_num_coded==4)",coef_den5_hyb
+util_den6_hyb,4000-9999 HH / sq mi Hybrid,"(hh_per_mi < 10000) & (hh_per_mi >= 4000) & (fuel_type_num_coded==4)",coef_den6_hyb
+util_den7_hyb,10000-24999 HH / sq mi Hybrid,"(hh_per_mi < 25000) & (hh_per_mi >= 10000) & (fuel_type_num_coded==4)",coef_den7_hyb
+util_den8_hyb,25000+ HH / sq mi Hybrid,"(hh_per_mi >= 25000) & (fuel_type_num_coded==4)",coef_den8_hyb
+util_den34_ev,500-1999 HH / sq mi Electric,"((hh_per_mi < 2000) & (hh_per_mi >= 500)) & ((fuel_type_num_coded==5) | (fuel_type_num_coded==1))",coef_den34_ev
+util_den5_ev,2000-3999 HH / sq mi Electric,"((hh_per_mi < 4000) & (hh_per_mi >= 2000)) & ((fuel_type_num_coded==5) | (fuel_type_num_coded==1))",coef_den5_ev
+util_den6_ev,4000-9999 HH / sq mi Electric,"((hh_per_mi < 10000) & (hh_per_mi >= 4000)) & ((fuel_type_num_coded==5) | (fuel_type_num_coded==1))",coef_den6_ev
+util_den78_ev,10000+ HH / sq mi Electric,"(hh_per_mi >= 10000) & ((fuel_type_num_coded==5) | (fuel_type_num_coded==1))",coef_den78_ev
 #,household drivers,,
 util_oneveh_age,Household owns only one vehicle * vehicle age,"(auto_ownership == 1) * age",coef_oneveh_age
-util_vhgtdr_van,Household vehicles gt drivers for Van,hh_veh_gt_drivers * ((df.body_type_num_coded==5)),coef_vhgtdr_van
-util_vhgtdr_suv,Household vehicles gt drivers for SUV,hh_veh_gt_drivers * ((df.body_type_num_coded==4)),coef_vhgtdr_suv
-util_vhgtdr_pu,Household vehicles gt drivers for Pickup,hh_veh_gt_drivers * ((df.body_type_num_coded==3)),coef_vhgtdr_pu
-util_vhgtdr_mc,Household vehicles gt drivers for Motorcycle,hh_veh_gt_drivers * ((df.body_type_num_coded==2)),coef_vhgtdr_mc
-util_vhgtdr_hy,Household vehicles gt drivers for Hybrid,hh_veh_gt_drivers * ((df.fuel_type_num_coded==4)),coef_vhgtdr_hy
-util_vhgtdr_ev,Household vehicles gt drivers for EVs,"@np.where((df.fuel_type_num_coded==5) | (df.fuel_type_num_coded==1),df.hh_veh_gt_drivers,0)",coef_vhgtdr_ev
+util_vhgtdr_van,Household vehicles gt drivers for Van,hh_veh_gt_drivers * (body_type_num_coded==5),coef_vhgtdr_van
+util_vhgtdr_suv,Household vehicles gt drivers for SUV,hh_veh_gt_drivers * (body_type_num_coded==4),coef_vhgtdr_suv
+util_vhgtdr_pu,Household vehicles gt drivers for Pickup,hh_veh_gt_drivers * (body_type_num_coded==3),coef_vhgtdr_pu
+util_vhgtdr_mc,Household vehicles gt drivers for Motorcycle,hh_veh_gt_drivers * (body_type_num_coded==2),coef_vhgtdr_mc
+util_vhgtdr_hy,Household vehicles gt drivers for Hybrid,hh_veh_gt_drivers * (fuel_type_num_coded==4),coef_vhgtdr_hy
+util_vhgtdr_ev,Household vehicles gt drivers for EVs,"((fuel_type_num_coded==5) | (fuel_type_num_coded==1)) * hh_veh_gt_drivers",coef_vhgtdr_ev
 util_vhgtdr_age,Household vehicles gt drivers for age,hh_veh_gt_drivers * age,coef_vhgtdr_age
 #,interacting with number of children,,
-util_nchld_van,Number of children max 3 * Van,num_children.clip(upper=3) * ((df.body_type_num_coded==5)),coef_nchld_van
-util_nchld_suv,Number of children max 3 * SUV,num_children.clip(upper=3) * ((df.body_type_num_coded==4)),coef_nchld_suv
-util_nchld_pu,Number of children max 3 * Pickup,num_children.clip(upper=3) * ((df.body_type_num_coded==3)),coef_nchld_pu
-util_nchld_mc,Number of children max 3 * Motorcycle,num_children.clip(upper=3) * ((df.body_type_num_coded==2)),coef_nchld_mc
-util_nchld_hy,Number of children max 3 * Hybrid,num_children.clip(upper=3) * ((df.fuel_type_num_coded==4)),coef_nchld_hy
-util_nchld_ev,Number of children max 3 * EVs,"@np.where((df.fuel_type_num_coded==5) | (df.fuel_type_num_coded==1),df.num_children.clip(upper=3),0)",coef_nchld_ev
+util_nchld_van,Number of children max 3 * Van,num_children.clip(upper=3) * (body_type_num_coded==5),coef_nchld_van
+util_nchld_suv,Number of children max 3 * SUV,num_children.clip(upper=3) * (body_type_num_coded==4),coef_nchld_suv
+util_nchld_pu,Number of children max 3 * Pickup,num_children.clip(upper=3) * (body_type_num_coded==3),coef_nchld_pu
+util_nchld_mc,Number of children max 3 * Motorcycle,num_children.clip(upper=3) * (body_type_num_coded==2),coef_nchld_mc
+util_nchld_hy,Number of children max 3 * Hybrid,num_children.clip(upper=3) * (fuel_type_num_coded==4),coef_nchld_hy
+util_nchld_ev,Number of children max 3 * EVs,"((fuel_type_num_coded==5) | (fuel_type_num_coded==1)) * num_children.clip(upper=3)",coef_nchld_ev
 util_nchld_age,Number of children max 3 * age,num_children.clip(upper=3) * age,coef_nchld_age
 util_dstwkt_age,Total distance to work * age,total_hh_dist_to_work_cap * age,coef_dstwkt_age
 #,household already owning vehicles,,
-util_van_van,Household already owns a Van -- Van,"@np.where(df.num_hh_Van > 0,((df.body_type_num_coded==5)),0)",coef_van_van
-util_van_suv,Household already owns a Van -- SUV,"@np.where(df.num_hh_Van > 0,((df.body_type_num_coded==4)),0)",coef_van_suv
-util_van_pu,Household already owns a Van -- Pickup,"@np.where(df.num_hh_Van > 0,((df.body_type_num_coded==3)),0)",coef_van_pu
-util_van_mc,Household already owns a Van -- Motorcycle,"@np.where(df.num_hh_Van > 0,((df.body_type_num_coded==2)),0)",coef_van_mc
-util_van_suv,Household already owns an SUV -- Van (symmetrical with above),"@np.where(df.num_hh_SUV > 0,((df.body_type_num_coded==5)),0)",coef_van_suv
-util_suv_suv,Household already owns an SUV -- SUV,"@np.where(df.num_hh_SUV > 0,((df.body_type_num_coded==4)),0)",coef_suv_suv
-util_suv_pu,Household already owns an SUV -- Pickup,"@np.where(df.num_hh_SUV > 0,((df.body_type_num_coded==3)),0)",coef_suv_pu
-util_suv_mc,Household already owns an SUV -- Motorcycle,"@np.where(df.num_hh_SUV > 0,((df.body_type_num_coded==2)),0)",coef_suv_mc
-util_van_pu,Household already owns a Pickup -- Van (symmetrical with above),"@np.where(df.num_hh_Pickup > 0,((df.body_type_num_coded==5)),0)",coef_van_pu
-util_suv_pu,Household already owns a Pickup -- SUV (symmetrical with above),"@np.where(df.num_hh_Pickup > 0,((df.body_type_num_coded==4)),0)",coef_suv_pu
-util_pu_pu,Household already owns a Pickup -- Pickup,"@np.where(df.num_hh_Pickup > 0,((df.body_type_num_coded==3)),0)",coef_pu_pu
-util_pu_mc,Household already owns a Pickup -- Motorcycle,"@np.where(df.num_hh_Pickup > 0,((df.body_type_num_coded==2)),0)",coef_pu_mc
-util_van_mc,Household already owns a Motorcycle -- Van (symmetrical with above),"@np.where(df.num_hh_Motorcycle > 0,((df.body_type_num_coded==5)),0)",coef_van_mc
-util_suv_mc,Household already owns a Motorcycle -- SUV (symmetrical with above),"@np.where(df.num_hh_Motorcycle > 0,((df.body_type_num_coded==4)),0)",coef_suv_mc
-util_pu_mc,Household already owns a Motorcycle -- Pickup (symmetrical with above),"@np.where(df.num_hh_Motorcycle > 0,((df.body_type_num_coded==3)),0)",coef_pu_mc
-util_mc_mc,Household already owns a Motorcycle -- Motorcycle,"@np.where(df.num_hh_Motorcycle > 0,((df.body_type_num_coded==2)),0)",coef_mc_mc
-util_hyb_hyb,Houeshold already owns a Hybrid -- Hybrid,"@np.where(df.num_hh_Hybrid > 0,((df.fuel_type_num_coded==4)),0)",coef_hyb_hyb
-util_hyb_ev,Houeshold already owns a Hybrid -- EV,"@np.where(df.num_hh_Hybrid > 0, (df.fuel_type_num_coded==5) | (df.fuel_type_num_coded==1),0)",coef_hyb_ev
-util_hyb_ev,Houeshold already owns an EV -- Hybrid (symmetrical with above),"@np.where(df.num_hh_EV> 0,((df.fuel_type_num_coded==4)),0)",coef_hyb_ev
-util_only_van,Household only owns Vans,"@np.where((df.num_hh_Van > 0) * (df.num_hh_Van == df.num_hh_veh_owned),((df.body_type_num_coded==5)),0)",coef_only_van
-util_only_suv,Household only owns SUVs,"@np.where((df.num_hh_SUV > 0) * (df.num_hh_SUV == df.num_hh_veh_owned),((df.body_type_num_coded==4)),0)",coef_only_suv
-util_only_pu,Household only owns Pickups,"@np.where((df.num_hh_Pickup > 0) * (df.num_hh_Pickup == df.num_hh_veh_owned),((df.body_type_num_coded==3)),0)",coef_only_pu
-util_only_mc,Household only owns Motorcycles,"@np.where((df.num_hh_Motorcycle > 0) * (df.num_hh_Motorcycle == df.num_hh_veh_owned),((df.body_type_num_coded==2)),0)",coef_only_mc
-util_only_bev,Household only owns BEVs,"@np.where((df.num_hh_BEV > 0) * (df.num_hh_BEV == df.num_hh_veh_owned),(df.fuel_type_num_coded==1),0)",coef_only_bev
+util_van_van,Household already owns a Van -- Van,"(num_hh_Van > 0)  & (body_type_num_coded==5)",coef_van_van
+util_van_suv,Household already owns a Van -- SUV,"(num_hh_Van > 0)  & (body_type_num_coded==4)",coef_van_suv
+util_van_pu,Household already owns a Van -- Pickup,"(num_hh_Van > 0)  & (body_type_num_coded==3)",coef_van_pu
+util_van_mc,Household already owns a Van -- Motorcycle,"(num_hh_Van > 0)  & (body_type_num_coded==2)",coef_van_mc
+util_van_suv,Household already owns an SUV -- Van (symmetrical with above),"(num_hh_SUV > 0)  & (body_type_num_coded==5)",coef_van_suv
+util_suv_suv,Household already owns an SUV -- SUV,"(num_hh_SUV > 0)  & (body_type_num_coded==4)",coef_suv_suv
+util_suv_pu,Household already owns an SUV -- Pickup,"(num_hh_SUV > 0)  & (body_type_num_coded==3)",coef_suv_pu
+util_suv_mc,Household already owns an SUV -- Motorcycle,"(num_hh_SUV > 0)  & (body_type_num_coded==2)",coef_suv_mc
+util_van_pu,Household already owns a Pickup -- Van (symmetrical with above),"(num_hh_Pickup > 0)  & (body_type_num_coded==5)",coef_van_pu
+util_suv_pu,Household already owns a Pickup -- SUV (symmetrical with above),"(num_hh_Pickup > 0)  & (body_type_num_coded==4)",coef_suv_pu
+util_pu_pu,Household already owns a Pickup -- Pickup,"(num_hh_Pickup > 0)  & (body_type_num_coded==3)",coef_pu_pu
+util_pu_mc,Household already owns a Pickup -- Motorcycle,"(num_hh_Pickup > 0)  & (body_type_num_coded==2)",coef_pu_mc
+util_van_mc,Household already owns a Motorcycle -- Van (symmetrical with above),"(num_hh_Motorcycle > 0)  & (body_type_num_coded==5)",coef_van_mc
+util_suv_mc,Household already owns a Motorcycle -- SUV (symmetrical with above),"(num_hh_Motorcycle > 0)  & (body_type_num_coded==4)",coef_suv_mc
+util_pu_mc,Household already owns a Motorcycle -- Pickup (symmetrical with above),"(num_hh_Motorcycle > 0)  & (body_type_num_coded==3)",coef_pu_mc
+util_mc_mc,Household already owns a Motorcycle -- Motorcycle,"(num_hh_Motorcycle > 0)  & (body_type_num_coded==2)",coef_mc_mc
+util_hyb_hyb,Houeshold already owns a Hybrid -- Hybrid,"(num_hh_Hybrid > 0)  & (fuel_type_num_coded==4)",coef_hyb_hyb
+util_hyb_ev,Houeshold already owns a Hybrid -- EV,"(num_hh_Hybrid > 0) & ((fuel_type_num_coded==5) | (fuel_type_num_coded==1))",coef_hyb_ev
+util_hyb_ev,Houeshold already owns an EV -- Hybrid (symmetrical with above),"(num_hh_EV> 0)  & (fuel_type_num_coded==4)",coef_hyb_ev
+util_only_van,Household only owns Vans,"(num_hh_Van > 0) & (num_hh_Van == num_hh_veh_owned) & (body_type_num_coded==5)",coef_only_van
+util_only_suv,Household only owns SUVs,"(num_hh_SUV > 0) & (num_hh_SUV == num_hh_veh_owned) & (body_type_num_coded==4)",coef_only_suv
+util_only_pu,Household only owns Pickups,"(num_hh_Pickup > 0) & (num_hh_Pickup == num_hh_veh_owned) & (body_type_num_coded==3)",coef_only_pu
+util_only_mc,Household only owns Motorcycles,"(num_hh_Motorcycle > 0) & (num_hh_Motorcycle == num_hh_veh_owned) & (body_type_num_coded==2)",coef_only_mc
+util_only_bev,Household only owns BEVs,"(num_hh_BEV > 0) & (num_hh_BEV == num_hh_veh_owned) & (fuel_type_num_coded==1)",coef_only_bev
 #,constants,,
-util_van,Van ASC,((df.body_type_num_coded==5)),coef_van
-util_suv,SUV ASC,((df.body_type_num_coded==4)),coef_suv
-util_pu,Pickup ASC,((df.body_type_num_coded==3)),coef_pu
-util_mc,Motorcycle ASC,((df.body_type_num_coded==2)),coef_mc
-util_dsl,Diesel ASC,((df.fuel_type_num_coded==2)),coef_dsl
-util_hyb,Hybrid ASC,((df.fuel_type_num_coded==4)),coef_hyb
-util_pev,PEV ASC,((df.fuel_type_num_coded==5)),coef_pev
-util_bev,BEV ASC,(df.fuel_type_num_coded==1),coef_bev
+util_van,Van ASC,(body_type_num_coded==5),coef_van
+util_suv,SUV ASC,(body_type_num_coded==4),coef_suv
+util_pu,Pickup ASC,(body_type_num_coded==3),coef_pu
+util_mc,Motorcycle ASC,(body_type_num_coded==2),coef_mc
+util_dsl,Diesel ASC,(fuel_type_num_coded==2),coef_dsl
+util_hyb,Hybrid ASC,(fuel_type_num_coded==4),coef_hyb
+util_pev,PEV ASC,(fuel_type_num_coded==5),coef_pev
+util_bev,BEV ASC,(fuel_type_num_coded==1),coef_bev
 util_age2,Age 2 ASC,(age==2),coef_age2
 util_age3,Age 3 ASC,(age==3),coef_age3
 util_age4,Age 4 ASC,(age==4),coef_age4
@@ -124,12 +124,12 @@ util_age18,Age 18 ASC,(age==18),coef_age18
 util_age19,Age 19 ASC,(age==19),coef_age19
 util_age20,Age 20 ASC,(age==20),coef_age20
 #,rural household coefficients,,
-util_rural_van,Household is in Rural Area - Van,"home_is_rural & (df.body_type_num_coded==5)",coef_rural_van
-util_rural_suv,Household is in Rural Area - SUV,"home_is_rural & (df.body_type_num_coded==4)",coef_rural_suv
-util_rural_pu,Household is in Rural Area - Pickup,"home_is_rural & (df.body_type_num_coded==3)",coef_rural_pu
-util_rural_mc,Household is in Rural Area - Motorcycle,"home_is_rural & (df.body_type_num_coded==2)",coef_rural_mc
-util_rural_hyb,Household is in Rural Area - Hybrid,"home_is_rural & (df.fuel_type_num_coded==4)",coef_rural_hyb
-util_rural_ev,Household is in Rural Area - Electric,"home_is_rural & (df.fuel_type_num_coded==5) | (df.fuel_type_num_coded==1)",coef_rural_ev
+util_rural_van,Household is in Rural Area - Van,"home_is_rural & (body_type_num_coded==5)",coef_rural_van
+util_rural_suv,Household is in Rural Area - SUV,"home_is_rural & (body_type_num_coded==4)",coef_rural_suv
+util_rural_pu,Household is in Rural Area - Pickup,"home_is_rural & (body_type_num_coded==3)",coef_rural_pu
+util_rural_mc,Household is in Rural Area - Motorcycle,"home_is_rural & (body_type_num_coded==2)",coef_rural_mc
+util_rural_hyb,Household is in Rural Area - Hybrid,"home_is_rural & (fuel_type_num_coded==4)",coef_rural_hyb
+util_rural_ev,Household is in Rural Area - Electric,"home_is_rural & ((fuel_type_num_coded==5) | (fuel_type_num_coded==1))",coef_rural_ev
 util_rural_age,Household is in Rural Area - Age,"home_is_rural * age",coef_rural_age
 #,MSA population coefficients,,
 util_smsa_van,MSA population less than 1 million - Van,"@(MSA_POP < 1000000) * (df.body_type_num_coded == 5)",coef_smsa_van
