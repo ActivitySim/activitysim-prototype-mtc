@@ -100,6 +100,7 @@ input_table_list:
 households_sample_size:  100
 # simulate all households
 # households_sample_size: 0
+memory_profile: True
 
 # set false to disable variability check in simple_simulate and interaction_simulate
 check_for_variability: False
