@@ -226,12 +226,12 @@ class Landuse(pa.DataFrameModel):
         persons = TABLE_STORE["persons"]
         households = TABLE_STORE["households"]
         persons_per_household = persons.groupby("household_id").size()
-        hh = households[["household_id", "home_zone_id"]].merge(
-            persons_per_household.rename("persons_per_household"), on="household_id"
+        hh = households[["household_id", "home_zone_id"]].merge(persons_per_household.rename("persons_per_household"), on="household_id")
+        pop = (
+            hh.groupby(households.home_zone_id)["persons_per_household"].sum()
         )
-        pop = hh.groupby(households.home_zone_id)["persons_per_household"].sum()
         lu = land_use.set_index("zone_id")
-        return pop.reindex(lu.index) == lu.TOTPOP
+        return (pop.reindex(lu.index) == lu.TOTPOP)
 
 
 class NetworkLinks(pa.DataFrameModel):

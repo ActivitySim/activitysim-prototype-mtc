@@ -14,7 +14,7 @@ steps:
     defaults:
       example_name: .
       workflow_name: performance-benchmarking/mtc-extended
-      workspace: ..
+      workspace: .
       create: False
       compile: True
       sharrow: True
