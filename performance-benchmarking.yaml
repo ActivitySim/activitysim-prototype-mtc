@@ -37,7 +37,7 @@ steps:
       trace_hh_id:
       trace_od:
       chunk_method: hybrid_uss
-      chunk_training_mode: disabled
+      chunk_training_mode: explicit
 
 - name: activitysim.workflows.steps.pype
   in:
