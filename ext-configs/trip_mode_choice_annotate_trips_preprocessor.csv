@@ -92,4 +92,4 @@ dest terminal time not counted at home,_dest_terminal_time,"np.where(inbound & l
 #,dist_bike,od_skims['DISTBIKE']
 #,dist_only,od_skims['DIST']
 # added for school escorting model,,
-Number of school children in vehicle on trip,num_escortees,df.escort_participants.fillna('').apply(lambda x: len(x.split('_')))
+Number of school children in vehicle on trip,num_escortees,df.escort_participants.fillna('').apply(lambda x: len(x.split('_')) if len(x)>0 else 0)
