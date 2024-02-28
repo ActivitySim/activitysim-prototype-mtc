@@ -11,11 +11,13 @@ import pandas.testing as pdt
 from activitysim.core import testing, workflow
 
 
-def example_path(dirname):
+def _example_path(dirname):
+    """Paths to things in the top-level directory of this repository."""
     return os.path.normpath(os.path.join(os.path.dirname(__file__), "..", dirname))
 
 
-def test_path(dirname):
+def _test_path(dirname):
+    """Paths to things in the `test` directory."""
     return os.path.join(os.path.dirname(__file__), dirname)
 
 
@@ -25,10 +27,10 @@ def run_test_mtc(
 
     def regress(ext):
         if ext:
-            regress_trips_df = pd.read_csv(test_path("regress/final_trips-ext.csv"))
+            regress_trips_df = pd.read_csv(_test_path("regress/final_trips-ext.csv"))
         else:
-            regress_trips_df = pd.read_csv(test_path("regress/final_trips.csv"))
-        final_trips_df = pd.read_csv(test_path("output/final_trips.csv"))
+            regress_trips_df = pd.read_csv(_test_path("regress/final_trips.csv"))
+        final_trips_df = pd.read_csv(_test_path("output/final_trips.csv"))
 
         # column order may not match, so fix it before checking
         assert sorted(regress_trips_df.columns) == sorted(final_trips_df.columns)
@@ -48,39 +50,39 @@ def run_test_mtc(
             run_args.extend(
                 [
                     "-c",
-                    test_path("ext-configs_mp"),
+                    _test_path("ext-configs_mp"),
                     "-c",
-                    example_path("ext-configs_mp"),
+                    _example_path("ext-configs_mp"),
                 ]
             )
         else:
             run_args.extend(
                 [
                     "-c",
-                    test_path("configs_mp"),
+                    _test_path("configs_mp"),
                     "-c",
-                    example_path("configs_mp"),
+                    _example_path("configs_mp"),
                 ]
             )
     elif chunkless:
         run_args.extend(
             [
                 "-c",
-                test_path("configs_chunkless"),
+                _test_path("configs_chunkless"),
             ]
         )
     elif recode:
         run_args.extend(
             [
                 "-c",
-                test_path("configs_recode"),
+                _test_path("configs_recode"),
             ]
         )
     elif sharrow:
         run_args.extend(
             [
                 "-c",
-                test_path("configs_sharrow"),
+                _test_path("configs_sharrow"),
             ]
         )
         if os.environ.get("GITHUB_ACTIONS") != "true":
@@ -89,7 +91,7 @@ def run_test_mtc(
         run_args.extend(
             [
                 "-c",
-                test_path("configs"),
+                _test_path("configs"),
             ]
         )
 
@@ -98,15 +100,15 @@ def run_test_mtc(
         run_args.extend(
             [
                 "--data_model",
-                example_path("data_model"),
+                _example_path("data_model"),
                 "-c",
-                test_path("ext-configs"),
+                _test_path("ext-configs"),
                 "-c",
-                example_path("ext-configs"),
+                _example_path("ext-configs"),
             ]
         )
 
-    out_dir = test_path(
+    out_dir = _test_path(
         f"output-{'mp' if multiprocess else 'single'}"
         f"-{'chunkless' if chunkless else 'chunked'}"
         f"-{'recode' if recode else 'no_recode'}"
@@ -121,9 +123,9 @@ def run_test_mtc(
     run_args.extend(
         [
             "-c",
-            example_path("configs"),
+            _example_path("configs"),
             "-d",
-            example_path("data"),
+            _example_path("data"),
             "-o",
             out_dir,
         ]
@@ -225,20 +227,20 @@ def test_mtc_extended_progressive():
 
     import activitysim.abm  # register components # noqa: F401
 
-    out_dir = test_path("output-progressive")
+    out_dir = _test_path("output-progressive")
     Path(out_dir).mkdir(exist_ok=True)
     Path(out_dir).joinpath(".gitignore").write_text("**\n")
 
     state = workflow.State.make_default(
         configs_dir=(
-            test_path("configs_recode"),
-            test_path("ext-configs"),
-            example_path("ext-configs"),
-            test_path("configs"),
-            example_path("configs"),
+            _test_path("configs_recode"),
+            _test_path("ext-configs"),
+            _example_path("ext-configs"),
+            _test_path("configs"),
+            _example_path("configs"),
         ),
-        data_dir=example_path("data"),
-        data_model_dir=example_path("data_model"),
+        data_dir=_example_path("data"),
+        data_model_dir=_example_path("data_model"),
         output_dir=out_dir,
     )
     state.filesystem.persist_sharrow_cache()
