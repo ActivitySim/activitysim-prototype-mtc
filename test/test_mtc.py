@@ -11,17 +11,23 @@ import pandas.testing as pdt
 from activitysim.core import testing, workflow
 
 
+def example_path(dirname):
+    return os.path.normpath(os.path.join(os.path.dirname(__file__), "..", dirname))
+
+
+def test_path(dirname):
+    return os.path.join(os.path.dirname(__file__), dirname)
+
+
 def run_test_mtc(
     multiprocess=False, chunkless=False, recode=False, sharrow=False, extended=False
 ):
-    def example_path(dirname):
-        return os.path.normpath(os.path.join(os.path.dirname(__file__), "..", dirname))
 
-    def test_path(dirname):
-        return os.path.join(os.path.dirname(__file__), dirname)
-
-    def regress():
-        regress_trips_df = pd.read_csv(test_path("regress/final_trips.csv"))
+    def regress(ext):
+        if ext:
+            regress_trips_df = pd.read_csv(test_path("regress/final_trips-ext.csv"))
+        else:
+            regress_trips_df = pd.read_csv(test_path("regress/final_trips.csv"))
         final_trips_df = pd.read_csv(test_path("output/final_trips.csv"))
 
         # column order may not match, so fix it before checking
@@ -91,12 +97,27 @@ def run_test_mtc(
     if extended:
         run_args.extend(
             [
+                "--data_model",
+                example_path("data_model"),
                 "-c",
                 test_path("ext-configs"),
                 "-c",
                 example_path("ext-configs"),
             ]
         )
+
+    out_dir = test_path(
+        f"output-{'mp' if multiprocess else 'single'}"
+        f"-{'chunkless' if chunkless else 'chunked'}"
+        f"-{'recode' if recode else 'no_recode'}"
+        f"-{'sharrow' if sharrow else 'no_sharrow'}"
+        f"-{'ext' if extended else 'no_ext'}"
+    )
+
+    # create output directory if it doesn't exist and add .gitignore
+    Path(out_dir).mkdir(exist_ok=True)
+    Path(out_dir).joinpath(".gitignore").write_text("**\n")
+
     run_args.extend(
         [
             "-c",
@@ -104,7 +125,7 @@ def run_test_mtc(
             "-d",
             example_path("data"),
             "-o",
-            test_path("output"),
+            out_dir,
         ]
     )
 
@@ -113,7 +134,7 @@ def run_test_mtc(
     else:
         subprocess.run([sys.executable, file_path] + run_args, check=True)
 
-    regress()
+    regress(extended)
 
 
 def test_mtc():
@@ -157,16 +178,21 @@ def test_mtc_sharrow_ext():
 
 
 EXPECTED_MODELS = [
+    'input_checker',
+    'initialize_proto_population',
+    'compute_disaggregate_accessibility',
     "initialize_landuse",
     "initialize_households",
     "compute_accessibility",
     "school_location",
     "workplace_location",
     "auto_ownership_simulate",
+    "vehicle_type_choice",
     "free_parking",
     "cdap_simulate",
     "mandatory_tour_frequency",
     "mandatory_tour_scheduling",
+    "school_escorting",
     "joint_tour_frequency",
     "joint_tour_composition",
     "joint_tour_participation",
@@ -175,6 +201,7 @@ EXPECTED_MODELS = [
     "non_mandatory_tour_frequency",
     "non_mandatory_tour_destination",
     "non_mandatory_tour_scheduling",
+    "vehicle_allocation",
     "tour_mode_choice_simulate",
     "atwork_subtour_frequency",
     "atwork_subtour_destination",
@@ -190,34 +217,48 @@ EXPECTED_MODELS = [
     "track_skim_usage",
     "write_trip_matrices",
     "write_tables",
-    "summarize",
 ]
 
 
-@testing.run_if_exists("prototype_mtc_reference_pipeline.zip")
-def test_mtc_progressive():
+@testing.run_if_exists("reference-pipeline-extended.zip")
+def test_mtc_extended_progressive():
 
-    import activitysim.abm  # register components
+    import activitysim.abm  # register components # noqa: F401
 
-    whale = workflow.create_example("prototype_mtc", temp=True)
-    whale.filesystem.persist_sharrow_cache()
+    out_dir = test_path("output-progressive")
+    Path(out_dir).mkdir(exist_ok=True)
+    Path(out_dir).joinpath(".gitignore").write_text("**\n")
 
-    assert whale.settings.models == EXPECTED_MODELS
-    assert whale.settings.chunk_size == 0
-    assert not whale.settings.sharrow
+    state = workflow.State.make_default(
+        configs_dir=(
+            test_path("configs_recode"),
+            test_path("ext-configs"),
+            example_path("ext-configs"),
+            test_path("configs"),
+            example_path("configs"),
+        ),
+        data_dir=example_path("data"),
+        data_model_dir=example_path("data_model"),
+        output_dir=out_dir,
+    )
+    state.filesystem.persist_sharrow_cache()
+
+    assert state.settings.models == EXPECTED_MODELS
+    assert state.settings.chunk_size == 0
+    assert not state.settings.sharrow
 
     for step_name in EXPECTED_MODELS:
-        whale.run.by_name(step_name)
+        state.run.by_name(step_name)
         try:
-            whale.checkpoint.check_against(
-                Path(__file__).parent.joinpath("prototype_mtc_reference_pipeline.zip"),
+            state.checkpoint.check_against(
+                Path(__file__).parent.joinpath("reference-pipeline-extended.zip"),
                 checkpoint_name=step_name,
             )
         except Exception:
-            print(f"> prototype_mtc {step_name}: ERROR")
+            print(f"> prototype_mtc_extended {step_name}: ERROR")
             raise
         else:
-            print(f"> prototype_mtc {step_name}: ok")
+            print(f"> prototype_mtc_extended {step_name}: ok")
 
 
 if __name__ == "__main__":
@@ -226,3 +267,9 @@ if __name__ == "__main__":
     run_test_mtc(multiprocess=False, chunkless=True)
     run_test_mtc(recode=True)
     run_test_mtc(sharrow=True)
+    run_test_mtc(multiprocess=False, extended=True)
+    run_test_mtc(multiprocess=True, extended=True)
+    run_test_mtc(multiprocess=False, chunkless=True, extended=True)
+    run_test_mtc(recode=True, extended=True)
+    run_test_mtc(sharrow=True, extended=True)
+    test_mtc_extended_progressive()
