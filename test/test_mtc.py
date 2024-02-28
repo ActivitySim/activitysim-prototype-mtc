@@ -11,11 +11,11 @@ import pandas.testing as pdt
 from activitysim.core import testing, workflow
 
 
-def run_test_mtc(multiprocess=False, chunkless=False, recode=False, sharrow=False):
+def run_test_mtc(
+    multiprocess=False, chunkless=False, recode=False, sharrow=False, extended=False
+):
     def example_path(dirname):
-        return os.path.normpath(
-            os.path.join(os.path.dirname(__file__), "..", dirname)
-        )
+        return os.path.normpath(os.path.join(os.path.dirname(__file__), "..", dirname))
 
     def test_path(dirname):
         return os.path.join(os.path.dirname(__file__), dirname)
@@ -35,58 +35,70 @@ def run_test_mtc(multiprocess=False, chunkless=False, recode=False, sharrow=Fals
 
     file_path = os.path.join(os.path.dirname(__file__), "simulation.py")
 
+    run_args = []
+
     if multiprocess:
-        run_args = [
-            "-c",
-            test_path("configs_mp"),
-            "-c",
-            example_path("configs_mp"),
-            "-c",
-            example_path("configs"),
-            "-d",
-            example_path("data"),
-            "-o",
-            test_path("output"),
-        ]
+        if extended:
+            run_args.extend(
+                [
+                    "-c",
+                    test_path("ext-configs_mp"),
+                    "-c",
+                    example_path("ext-configs_mp"),
+                ]
+            )
+        else:
+            run_args.extend(
+                [
+                    "-c",
+                    test_path("configs_mp"),
+                    "-c",
+                    example_path("configs_mp"),
+                ]
+            )
     elif chunkless:
-        run_args = [
-            "-c",
-            test_path("configs_chunkless"),
-            "-c",
-            example_path("configs"),
-            "-d",
-            example_path("data"),
-            "-o",
-            test_path("output"),
-        ]
+        run_args.extend(
+            [
+                "-c",
+                test_path("configs_chunkless"),
+            ]
+        )
     elif recode:
-        run_args = [
-            "-c",
-            test_path("configs_recode"),
-            "-c",
-            example_path("configs"),
-            "-d",
-            example_path("data"),
-            "-o",
-            test_path("output"),
-        ]
+        run_args.extend(
+            [
+                "-c",
+                test_path("configs_recode"),
+            ]
+        )
     elif sharrow:
-        run_args = [
-            "-c",
-            test_path("configs_sharrow"),
-            "-c",
-            example_path("configs"),
-            "-d",
-            example_path("data"),
-            "-o",
-            test_path("output"),
-        ]
+        run_args.extend(
+            [
+                "-c",
+                test_path("configs_sharrow"),
+            ]
+        )
         if os.environ.get("GITHUB_ACTIONS") != "true":
             run_args.append("--persist-sharrow-cache")
     else:
-        run_args = [
-            "-c",
-            test_path("configs"),
+        run_args.extend(
+            [
+                "-c",
+                test_path("configs"),
+            ]
+        )
+
+    # general run args
+    if extended:
+        run_args.extend(
+            [
+                "-c",
+                test_path("ext-configs"),
+                "-c",
+                example_path("ext-configs"),
+            ]
+        )
+    run_args.extend(
+        [
             "-c",
             example_path("configs"),
             "-d",
@@ -94,6 +106,7 @@ def run_test_mtc(multiprocess=False, chunkless=False, recode=False, sharrow=Fals
             "-o",
             test_path("output"),
         ]
+    )
 
     if os.environ.get("GITHUB_ACTIONS") == "true":
         subprocess.run(["coverage", "run", "-a", file_path] + run_args, check=True)
@@ -121,6 +134,26 @@ def test_mtc_recode():
 
 def test_mtc_sharrow():
     run_test_mtc(sharrow=True)
+
+
+def test_mtc_ext():
+    run_test_mtc(multiprocess=False, extended=True)
+
+
+def test_mtc_chunkless_ext():
+    run_test_mtc(multiprocess=False, chunkless=True, extended=True)
+
+
+def test_mtc_mp_ext():
+    run_test_mtc(multiprocess=True, extended=True)
+
+
+def test_mtc_recode_ext():
+    run_test_mtc(recode=True, extended=True)
+
+
+def test_mtc_sharrow_ext():
+    run_test_mtc(sharrow=True, extended=True)
 
 
 EXPECTED_MODELS = [
@@ -171,7 +204,7 @@ def test_mtc_progressive():
 
     assert whale.settings.models == EXPECTED_MODELS
     assert whale.settings.chunk_size == 0
-    assert whale.settings.sharrow == False
+    assert not whale.settings.sharrow
 
     for step_name in EXPECTED_MODELS:
         whale.run.by_name(step_name)
