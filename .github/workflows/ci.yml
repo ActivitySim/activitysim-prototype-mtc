@@ -34,6 +34,7 @@ jobs:
           repository: 'ActivitySim/activitysim'
           ref: main
           path: 'activitysim'
+          fetch-depth: 0  # get all tags, lets setuptools_scm do its thing
 
       - name: Setup Mambaforge
         uses: conda-incubator/setup-miniconda@v3
