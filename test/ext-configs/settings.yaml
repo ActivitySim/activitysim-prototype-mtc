@@ -42,4 +42,4 @@ output_tables:
     - vehicles
     - proto_disaggregate_accessibility
 
-recode_pipeline_columns: False
+recode_pipeline_columns: True
