@@ -31,8 +31,8 @@ jobs:
       # checkout the main branch of ActivitySim itself
       - uses: actions/checkout@v4
         with:
-          repository: 'ActivitySim/activitysim'
-          ref: main
+          repository: 'driftlesslabs/activitysim'
+          ref: pandas-2
           path: 'activitysim'
           fetch-depth: 0  # get all tags, lets setuptools_scm do its thing
 
