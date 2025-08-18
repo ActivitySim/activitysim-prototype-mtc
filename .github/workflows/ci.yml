@@ -44,6 +44,20 @@ jobs:
         run: |
           uv sync --locked
 
+      # checkout the main branch of ActivitySim itself
+      - uses: actions/checkout@v4
+        with:
+          repository: 'ActivitySim/activitysim'
+          ref: main
+          path: 'cloned/activitysim'
+          fetch-depth: 0  # get all tags, lets setuptools_scm do its thing
+
+      # install ActivitySim, overriding the one in the workspace,
+      # as the pre-installed one is the latest release but not the most up-to-date
+      - name: Install ActivitySim
+        run: |
+          uv pip install --no-deps ./cloned/activitysim
+
       - name: Test this implementation
         run: |
           uv run pytest activitysim-prototype-mtc/test
