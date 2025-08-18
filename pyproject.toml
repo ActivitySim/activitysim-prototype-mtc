@@ -1,0 +1,26 @@
+[project]
+name = "activitysim-prototype-mtc"
+version = "1.4"
+description = "User environment for Prototype MTC Model"
+readme = "README.md"
+requires-python = ">=3.10,<3.12"
+dependencies = [
+    "activitysim==1.4",
+    "multimethod<2.0",
+    "numba>=0.57",
+    "numpy>=1.16.1,<1.26",
+    "openmatrix>=0.3.5.0",
+    "pandas>=2.1.0",
+    "pandera>=0.15,<0.18.1",
+    "psutil>=4.1",
+    "pydantic>=2.6",
+    "setuptools>=80.9.0,<81",
+    "sharrow>=2.14.0",
+    "tables>=3.9",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.1",
+    "zstandard>=0.23.0",
+]
