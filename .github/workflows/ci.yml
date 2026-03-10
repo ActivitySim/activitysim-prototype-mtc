@@ -51,11 +51,13 @@ jobs:
           fetch-depth: 0  # get all tags, lets setuptools_scm do its thing
 
       # install ActivitySim, overriding the one in the workspace,
-      # as the pre-installed one is the latest release but not the most up-to-date
+      # as the pre-installed one is not necessarily the most up-to-date
       - name: Install ActivitySim
         run: |
           uv pip install --no-deps ./cloned/activitysim
 
+      # The next step is to run the tests, but now we need "--no-sync" to avoid
+      # automatically reinstalling the overwritten version of ActivitySim
       - name: Test this implementation
         run: |
-          uv run pytest ./test
+          uv run --no-sync pytest ./test
