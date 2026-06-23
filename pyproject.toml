@@ -5,7 +5,7 @@ description = "User environment for Prototype MTC Model"
 readme = "README.md"
 requires-python = ">=3.10,<3.12"
 dependencies = [
-    "activitysim",
+    "activitysim>=1.5.1",
     "multimethod<2.0",
     "numba>=0.57",
     "numpy>=2,<3",
@@ -24,3 +24,7 @@ dev = [
     "pytest>=8.4.1",
     "zstandard>=0.23.0",
 ]
+
+[tool.uv.sources]
+activitysim = { git = "https://github.com/ActivitySim/ActivitySim", branch = "main" }
+## TODO: unpin from source once we have a release with the new features we need
