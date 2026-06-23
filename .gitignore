@@ -5,3 +5,4 @@
 **/__pycache__
 activitysim.log
 *.tar.zst
+/data_full
