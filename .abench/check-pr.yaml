@@ -1,0 +1,58 @@
+# Requires abench with data_assets and branch/PR source support.
+# Run from the repository root: abench . (choose check-pr.yaml, then answer inputs).
+schema_version: 1
+inputs:
+  activitysim_pr:
+    type: integer
+    required: true
+    minimum: 1
+    description: ActivitySim PR number to compare against current main
+  households:
+    type: integer
+    default: 500000
+    minimum: 0
+    description: Households to sample; 0 uses the full population
+  processes:
+    type: integer
+    default: 4
+    minimum: 1
+    description: Number of worker processes
+vars:
+  activitysim_repository: ActivitySim/activitysim
+output_root: ../benchmark-runs/mtc-${timestamp}
+data_assets:
+  # Match download_external_example(name="prototype_mtc_extended", ...).
+  name: prototype_mtc_extended
+  assets:
+    data_full.tar.zst:
+      url: https://github.com/ActivitySim/activitysim-prototype-mtc/releases/download/v1.3.4/data_full.tar.zst
+      sha256: b402506a61055e2d38621416dd9a5c7e3cf7517c0a9ae5869f6d760c03284ef3
+      # Asset destinations are relative to this YAML and must remain inside .abench.
+      # The archive and extracted contents still reuse ActivitySim's shared cache.
+      unpack: data_full
+defaults:
+  model_dir: ..
+  profile: mtc
+  data_dir: data_full
+  config_overlay: [../configs_explicit_chunk]
+  households: ${households}
+  processes: ${processes}
+  multiprocess: true
+  sharrow: true
+  memory: 32g
+  shm_size: 8g
+  sources:
+    - sharrow=ActivitySim/sharrow@fc175b27d8e0c5d202721c67d96b050e6117b235
+runs:
+  main:
+    label: MTC main — explicit chunking
+    sources:
+      - name: activitysim
+        repository: ${activitysim_repository}
+        branch: main
+  pr:
+    label: MTC PR ${activitysim_pr} — explicit chunking
+    sources:
+      - name: activitysim
+        repository: ${activitysim_repository}
+        pr: ${activitysim_pr}

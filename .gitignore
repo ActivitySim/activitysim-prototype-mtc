@@ -6,3 +6,7 @@
 activitysim.log
 *.tar.zst
 /data_full
+/benchmark-runs/
+
+# Local link to the shared benchmark data cache.
+/.abench/data_full
