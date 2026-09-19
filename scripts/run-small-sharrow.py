@@ -31,9 +31,7 @@ def main():
 
     state = workflow.State.make_default(
         working_dir=working_dir,
-        configs_dir=(
-            "configs",
-        ),
+        configs_dir=("configs",),
         data_dir="data",
         output_dir=out_dir,
         settings=settings,
@@ -41,12 +39,7 @@ def main():
     state.filesystem.persist_sharrow_cache()
     state.logging.config_logger()
 
-    # TODO: this script should be able to be run end-to-end with the "all" command
-    #       but should be configurable to run by resuming or starting over.
     state.run.all(resume_after=None)
-
-    # for step_name in state.settings.models:
-    #     state.run.by_name(step_name)
 
 
 if __name__ == "__main__":

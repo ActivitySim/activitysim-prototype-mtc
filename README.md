@@ -48,6 +48,35 @@ example_dir = download_external_example(
 )
 ```
 
+# Running the Sharrow scripts
+
+From the repository root, use the shared, locked environment:
+
+```sh
+uv run --locked scripts/run-small-sharrow.py
+# Or download the full dataset and run a 500,000-household sample:
+uv run --locked scripts/run-large-sharrow.py
+```
+
+The executable scripts can also be called directly from the repository root.
+They use `pyproject.toml` and `uv.lock`; no separate script environments or
+script lockfiles are needed. Output goes into `scripts/run-small-sharrow-output`
+or `scripts/run-large-sharrow-output`, respectively.
+
+# Testing
+
+Run the regression suite and script smoke tests against the locked release:
+
+```sh
+uv run --locked pytest test
+```
+
+CI runs this suite against both the locked ActivitySim release and current
+ActivitySim `main`. The main job replaces only ActivitySim, keeping the other
+locked dependencies, and uses `--no-sync` to preserve that installation.
+The script smoke tests validate startup, configuration, and filesystem behavior;
+they do not download the full dataset or simulate 500,000 households.
+
 # Benchmarking
 
 The `prototype_mtc` example model is run using the `activitysim` command line tool.

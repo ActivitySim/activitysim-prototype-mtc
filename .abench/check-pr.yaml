@@ -1,4 +1,4 @@
-# Requires abench with data_assets, branch/PR sources, and GitHub publishing support.
+# Requires abench >= 0.2.0 (data assets, branch/PR sources, and GitHub publishing).
 # Run from the repository root: abench . (choose check-pr.yaml, then answer inputs).
 # Publishes a summary and charts to the selected ActivitySim PR after the suite.
 # Requires gh >= 2.99, gh auth login, and write access to ActivitySim/activitysim.

@@ -3,9 +3,9 @@
 Use `-c configs_explicit_chunk -c configs` (or `-c configs_explicit_chunk -c configs_mp -c configs` for multiprocessing).
 For the benchmark use `--config-overlay configs_explicit_chunk`.
 
-This overlay enables explicit chunking and caps supported components at 10,000 chooser rows across the process group (2,500 per worker with four processes). This conservative initial limit leaves room for the shared skims, population tables, and temporary alternatives. It is not a 16 GB hard memory guarantee; row limits do not bound fixed tables, retained allocator pages, or every intermediate in main. The PR extends several chunk boundaries to cover more of those intermediates.
+This overlay enables explicit chunking and caps supported components at 10,000 chooser rows across the process group (2,500 per worker with four processes). This conservative initial limit leaves room for the shared skims, population tables, and temporary alternatives. It is not a 16 GB hard memory guarantee; row limits do not bound fixed tables, retained allocator pages, or every intermediate in main. [ActivitySim PR #1110](https://github.com/ActivitySim/activitysim/pull/1110) extends several chunk boundaries to cover more of those intermediates. The overlay also runs on ActivitySim 1.6/main without those extensions.
 
-Selection uses the union of components whose whole-container memory exceeded 16,000,000,000 bytes in either previous 500,000-household measured run. Legacy windows are approximate and include overlap with other workers, so these are group peaks, not isolated component allocations. `baseline-memory.json` preserves the evidence.
+Selection uses the union of components whose whole-container memory exceeded 16,000,000,000 bytes in either previous 500,000-household measured run. Legacy windows are approximate and include overlap with other workers, so these are group peaks, not isolated component allocations. These historical measurements are summarized below; a machine-readable baseline is not included in this repository.
 
 | Component | Highest observed GiB | Overlay / limitation |
 |---|---:|---|
