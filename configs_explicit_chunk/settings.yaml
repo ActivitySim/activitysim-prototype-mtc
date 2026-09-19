@@ -1,0 +1,4 @@
+# Enable per-component row limits; leave adaptive memory chunking off.
+inherit_settings: true
+chunk_training_mode: explicit
+chunk_size: 0

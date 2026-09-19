@@ -1,0 +1,4 @@
+# Bound chooser batches for the worker group (2,500 rows each with 4 workers).
+# Remaining model settings and specifications come from configs/.
+inherit_settings: true
+explicit_chunk: 10000
