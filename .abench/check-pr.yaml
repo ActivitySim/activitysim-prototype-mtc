@@ -1,5 +1,9 @@
-# Requires abench with data_assets and branch/PR source support.
+# Requires abench with data_assets, branch/PR sources, and GitHub publishing support.
 # Run from the repository root: abench . (choose check-pr.yaml, then answer inputs).
+# Publishes a summary and charts to the selected ActivitySim PR after the suite.
+# Requires gh >= 2.99, gh auth login, and write access to ActivitySim/activitysim.
+# Preview without posting: abench .abench/check-pr.yaml --publish-dry-run
+# Retry posting retained results: abench publish /path/to/suite-output
 schema_version: 1
 inputs:
   activitysim_pr:
@@ -20,6 +24,11 @@ inputs:
 vars:
   activitysim_repository: ActivitySim/activitysim
 output_root: ../benchmark-runs/mtc-${timestamp}
+publish:
+  github:
+    repository: ${activitysim_repository}
+    pr: ${activitysim_pr}
+    baseline: main
 data_assets:
   # Match download_external_example(name="prototype_mtc_extended", ...).
   name: prototype_mtc_extended
