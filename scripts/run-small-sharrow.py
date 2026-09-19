@@ -1,20 +1,10 @@
-#!/usr/bin/env -S uv run --script --locked --no-project
-#
-# /// script
-# requires-python = ">=3.10,<3.12"
-# dependencies = [
-#   "activitysim >=1.5,<2.0",
-#   "sharrow >=2.15",
-# ]
-# [tool.uv]
-# exclude-newer = "2025-11-01T00:00:00Z"
-# ///
+#!/usr/bin/env -S uv run --locked
 
 """
 Run the MTC example model with sharrow enabled, on the small test sample.
 
-The metadata in the header above allows this script to be run with `uv` without
-needing to set up a separate virtual environment or install dependencies manually.
+Run from the repository root with `uv run --locked scripts/run-small-sharrow.py`
+or execute this file directly there. Both use the shared pyproject.toml and uv.lock.
 """
 
 from pathlib import Path
