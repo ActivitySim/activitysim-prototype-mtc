@@ -44,9 +44,6 @@ def main():
         unpack = "data_full",
     )
 
-    # do not allow full data to enter Git repo
-    working_dir.joinpath(".gitignore").write_text("**\n")
-
     out_dir = Path(str(__file__).replace(".py", "-output"))
     out_dir.mkdir(exist_ok=True)
     out_dir.joinpath(".gitignore").write_text("**\n")
