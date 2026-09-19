@@ -15,12 +15,14 @@ jobs:
   foundation:
 
     strategy:
+      fail-fast: false
       matrix:
         python-version: ["3.10"]
+        activitysim: [locked, main]
     defaults:
       run:
         shell: bash -l {0}
-    name: linux-64-py${{ matrix.python-version }}
+    name: linux-64-py${{ matrix.python-version }}-${{ matrix.activitysim }}
     runs-on: ubuntu-latest
     steps:
       # checkout the code in this repository
@@ -36,14 +38,15 @@ jobs:
       - name: "Set up Python"
         uses: actions/setup-python@v5
         with:
-          python-version-file: ".python-version"
+          python-version: ${{ matrix.python-version }}
 
       - name: Install everything
         run: |
           uv sync --locked
 
-      # checkout the main branch of ActivitySim itself
+      # Only the compatibility job replaces the locked release.
       - uses: actions/checkout@v4
+        if: matrix.activitysim == 'main'
         with:
           repository: 'ActivitySim/activitysim'
           ref: main
@@ -52,12 +55,16 @@ jobs:
 
       # install ActivitySim, overriding the one in the workspace,
       # as the pre-installed one is not necessarily the most up-to-date
-      - name: Install ActivitySim
+      - name: Install ActivitySim main
+        if: matrix.activitysim == 'main'
         run: |
           uv pip install --no-deps ./cloned/activitysim
 
       # The next step is to run the tests, but now we need "--no-sync" to avoid
       # automatically reinstalling the overwritten version of ActivitySim
       - name: Test this implementation
+        env:
+          ACTIVITYSIM_TEST_SOURCE: ${{ matrix.activitysim }}
+          UV_NO_SYNC: ${{ matrix.activitysim == 'main' && '1' || '0' }}
         run: |
           uv run --no-sync pytest ./test
