@@ -15,8 +15,19 @@ ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ["run-small-sharrow.py", "run-large-sharrow.py"]
 
 
+@pytest.fixture
+def project_environment():
+    # ActivitySim also runs this suite using its own environment and lockfile.
+    # Only opt into checks of this project's environment when it was installed
+    # explicitly; a launcher could otherwise sync away the version under test.
+    source = os.environ.get("ACTIVITYSIM_TEST_SOURCE")
+    if source not in ("locked", "main"):
+        pytest.skip("requires the example environment (ACTIVITYSIM_TEST_SOURCE=locked or main)")
+    return source
+
+
 @pytest.mark.parametrize("script_name", SCRIPTS)
-def test_script_launcher_uses_project_environment(tmp_path, script_name):
+def test_script_launcher_uses_project_environment(tmp_path, script_name, project_environment):
     # Execute the actual launcher and dependency metadata, replacing only the
     # model body with a version probe so this test never launches a large run.
     source = (ROOT / "scripts" / script_name).read_text()
@@ -28,8 +39,11 @@ def test_script_launcher_uses_project_environment(tmp_path, script_name):
         'for p in ["activitysim", "sharrow", "numpy"]}))\n'
     )
     probe.chmod(0o755)
+    # Windows cannot execute a Python shebang. Use the documented uv command
+    # there, while continuing to exercise direct execution on POSIX systems.
+    command = ["uv", "run", "--locked", str(probe)] if os.name == "nt" else [str(probe)]
     result = subprocess.run(
-        [str(probe)], cwd=ROOT, env=os.environ.copy(),
+        command, cwd=ROOT, env=os.environ.copy(),
         text=True, capture_output=True, check=True, timeout=120,
     )
     versions = json.loads(result.stdout)
@@ -90,13 +104,13 @@ def test_script_preserves_checkout_and_configures_model(
         download.assert_not_called()
 
 
-def test_locked_dependencies_are_installed():
+def test_locked_dependencies_are_installed(project_environment):
     import tomli
 
     with (ROOT / "uv.lock").open("rb") as stream:
         packages = tomli.load(stream)["package"]
     for name in ("activitysim", "sharrow", "numpy"):
-        if name == "activitysim" and os.environ.get("ACTIVITYSIM_TEST_SOURCE") == "main":
+        if name == "activitysim" and project_environment == "main":
             continue  # Only ActivitySim is replaced in the compatibility job.
         locked = next(p["version"] for p in packages if p["name"] == name)
         assert importlib.metadata.version(name) == locked

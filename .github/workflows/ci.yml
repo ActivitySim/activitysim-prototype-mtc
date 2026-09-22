@@ -19,11 +19,12 @@ jobs:
       matrix:
         python-version: ["3.10"]
         activitysim: [locked, main]
+        os: [ubuntu-latest, windows-latest]
     defaults:
       run:
         shell: bash -l {0}
-    name: linux-64-py${{ matrix.python-version }}-${{ matrix.activitysim }}
-    runs-on: ubuntu-latest
+    name: ${{ matrix.os }}-py${{ matrix.python-version }}-${{ matrix.activitysim }}
+    runs-on: ${{ matrix.os }}
     steps:
       # checkout the code in this repository
       - uses: actions/checkout@v4
@@ -67,4 +68,15 @@ jobs:
           ACTIVITYSIM_TEST_SOURCE: ${{ matrix.activitysim }}
           UV_NO_SYNC: ${{ matrix.activitysim == 'main' && '1' || '0' }}
         run: |
-          uv run --no-sync pytest ./test
+          # Linux runs the full regression suite; Windows additionally checks
+          # script startup, including its platform-specific launcher.
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            uv run --no-sync pytest ./test/test_run_scripts.py
+          else
+            uv run --no-sync pytest ./test
+          fi
+
+      - name: Test scripts from an external environment
+        run: |
+          # Match ActivitySim's CI: no opt-in to this example's lockfile checks.
+          uv run --no-sync pytest ./test/test_run_scripts.py

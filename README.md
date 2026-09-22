@@ -58,7 +58,7 @@ uv run --locked scripts/run-small-sharrow.py
 uv run --locked scripts/run-large-sharrow.py
 ```
 
-The executable scripts can also be called directly from the repository root.
+On POSIX systems, the executable scripts can also be called directly from the repository root.
 They use `pyproject.toml` and `uv.lock`; no separate script environments or
 script lockfiles are needed. Output goes into `scripts/run-small-sharrow-output`
 or `scripts/run-large-sharrow-output`, respectively.
@@ -68,14 +68,23 @@ or `scripts/run-large-sharrow-output`, respectively.
 Run the regression suite and script smoke tests against the locked release:
 
 ```sh
-uv run --locked pytest test
+ACTIVITYSIM_TEST_SOURCE=locked uv run --locked pytest test
 ```
 
-CI runs this suite against both the locked ActivitySim release and current
+In PowerShell, first set `$env:ACTIVITYSIM_TEST_SOURCE = "locked"`, then run
+`uv run --locked pytest test`.
+
+CI runs the full suite on Linux and the script smoke tests on Windows, against
+both the locked ActivitySim release and current
 ActivitySim `main`. The main job replaces only ActivitySim, keeping the other
 locked dependencies, and uses `--no-sync` to preserve that installation.
 The script smoke tests validate startup, configuration, and filesystem behavior;
 they do not download the full dataset or simulate 500,000 households.
+
+When running the tests from an external ActivitySim development environment,
+leave `ACTIVITYSIM_TEST_SOURCE` unset. This skips the project launcher and locked
+version checks, which apply only to this example's environment. Model regression
+and script configuration tests still run against the installed ActivitySim.
 
 # Benchmarking
 
